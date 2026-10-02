@@ -1,0 +1,11 @@
+const intro=document.querySelector('#intro'),gift=document.querySelector('#gift'),hint=document.querySelector('#openHint'),letterScreen=document.querySelector('#letterScreen'),yes=document.querySelector('#yes'),no=document.querySelector('#no'),success=document.querySelector('#success');
+let opened=false;
+function show(next,current){current.classList.remove('active');current.setAttribute('aria-hidden','true');setTimeout(()=>{next.classList.add('active');next.setAttribute('aria-hidden','false')},260)}
+function openGift(){if(opened)return;opened=true;gift.classList.add('open');hint.textContent='Para ti 💙';setTimeout(()=>show(letterScreen,intro),900)}
+gift.addEventListener('click',openGift);hint.addEventListener('click',openGift);
+function flee(e){if(e)e.preventDefault();if(!no.classList.contains('fleeing')){const r=no.getBoundingClientRect();no.classList.add('fleeing');no.style.width=r.width+'px';no.style.height=r.height+'px'}const pad=14,w=no.offsetWidth,h=no.offsetHeight;let x=pad+Math.random()*Math.max(1,innerWidth-w-pad*2),y=pad+Math.random()*Math.max(1,innerHeight-h-pad*2);if(e&&e.clientX){for(let i=0;i<12;i++){const dx=x+w/2-e.clientX,dy=y+h/2-e.clientY;if(Math.hypot(dx,dy)>150)break;x=pad+Math.random()*Math.max(1,innerWidth-w-pad*2);y=pad+Math.random()*Math.max(1,innerHeight-h-pad*2)}}no.style.left=x+'px';no.style.top=y+'px';no.style.transform='rotate('+(Math.random()*10-5)+'deg)'}
+['pointerenter','pointerdown','touchstart','click'].forEach(ev=>no.addEventListener(ev,flee,{passive:false}));
+document.addEventListener('pointermove',e=>{if(!letterScreen.classList.contains('active'))return;const r=no.getBoundingClientRect();const d=Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2));if(d<85)flee(e)});
+yes.addEventListener('click',()=>{show(success,letterScreen);for(let i=0;i<28;i++)setTimeout(()=>spark(),i*45)});
+function spark(){const s=document.createElement('span');s.className='spark';s.textContent=Math.random()>.45?'✦':'♥';s.style.left=(45+Math.random()*10)+'vw';s.style.top=(45+Math.random()*10)+'vh';s.style.setProperty('--x',(Math.random()*500-250)+'px');s.style.setProperty('--y',(Math.random()*500-250)+'px');s.style.fontSize=(10+Math.random()*16)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1500)}
+addEventListener('resize',()=>{if(no.classList.contains('fleeing'))flee()});
